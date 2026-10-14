@@ -40,7 +40,8 @@ public class Product {
 
        }
     }
-    public void AddProduct(){
+    public void AddProduct()
+    {
         Scanner sc=new Scanner(System.in);
         System.out.println("Enter product name:");
         String name=sc.nextLine();
@@ -70,5 +71,62 @@ public class Product {
 
         }
     }
+    public void UpdateProduct(){
+        Scanner sc=new Scanner(System.in);
+        System.out.println("Enter product id to update : ");
+        int id=sc.nextInt();
+        System.out.println("Enter the new price : ");
+        double price=sc.nextDouble();
+        System.out.println("Enter new stock quantity : ");
+        int stock=sc.nextInt();
+        if (price<=0||stock<=0){
+            System.out.println("Price must be positive and stock cant be negative");
+            return;
+        }
+        String sql="Update products set price=?,stock_quantity=? where product_id=?";
+        try(
+                Connection con=DriverManager.getConnection(URL,USER,PASS);
+                PreparedStatement pstmt=con.prepareStatement(sql)
+                )
+        {
+            pstmt.setDouble(1,price);
+            pstmt.setInt(2,stock);
+            pstmt.setInt(3,id);
+            int rows=pstmt.executeUpdate();
+            if (rows>0){
+                System.out.println("Product updated successfully");
+            }else{
+                System.out.println("Product id not found");
+            }
+        }catch(SQLException e){
+            System.out.println("Error updating product");
+        }
+    }
+    public void DeleteProduct(){
+        Scanner sc=new Scanner(System.in);
+        System.out.println("Enter product id to delete : ");
+        int id=sc.nextInt();
+        if (id<=0) {
+            System.out.println("ID cant be found");
+            return;
+        }
+        String sql="delete  from products  where product_id=?";
+        try(
+                Connection con=DriverManager.getConnection(URL,USER,PASS);
+                PreparedStatement pstmt=con.prepareStatement(sql)
+        )
+        {
+            pstmt.setInt(1,id);
+            int rows=pstmt.executeUpdate();
+            if (rows>0){
+                System.out.println("Product deleted successfully");
+            }else{
+                System.out.println("Product id not found");
+            }
+        }catch(SQLException e){
+            System.out.println("Error deleting product");
+        }
+    }
+
 
 }
